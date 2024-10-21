@@ -25,7 +25,9 @@ jobs:
           echo "Mam main brancha"
           git status
           git log --oneline -n 5
+          echo "no i diffuj!"
           git diff --name-only main...HEAD 
+          echo "no i kurwa zdiffował"
 
 #      # Get the merge base between the PR branch and main
 #      - name: Get merge base
