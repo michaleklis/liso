@@ -2,7 +2,7 @@ name: Compare PR Changes
 
 on:
   pull_request:
-    types: [ synchronize, opened ]
+    types: [synchronize, opened]
 
 jobs:
   compare:
@@ -19,20 +19,25 @@ jobs:
       - name: Fetch main branch
         run: |
           git fetch origin main
-          git checkout main
-          git pull origin main
 
-      # Get the diff between the PR and main
+      # Get the merge base between the PR branch and main
+      - name: Get merge base
+        id: merge-base
+        run: |
+          BASE=$(git merge-base main HEAD)
+          echo "merge_base=$BASE" >> $GITHUB_ENV
+
+      # Compare the changes between the PR branch and main
       - name: Compare with main
         run: |
-          git checkout ${{ github.event.pull_request.head.sha }}
-          git diff --name-only main...${{ github.event.pull_request.head.sha }}
+          echo "Changed files:"
+          git diff --name-only ${{ env.merge_base }}..HEAD
 
       # Optional: Save the list of changed files in a GitHub Action output
       - name: Save changed files
         id: changed_files
         run: |
-          changed_files=$(git diff --name-only main...${{ github.event.pull_request.head.sha }})
+          changed_files=$(git diff --name-only ${{ env.merge_base }}..HEAD)
           echo "changed_files=$changed_files" >> $GITHUB_ENV
 
       # Display the changed files
