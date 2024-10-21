@@ -18,30 +18,36 @@ jobs:
       # Fetch the latest commit from the main branch
       - name: Fetch main branch
         run: |
+          echo "Wchodze i mam taki status"
+          git status
+          echo "Fetchuje sie"
           git fetch origin main
+          echo "Mam main brancha"
+          git status
+          git log --oneline -n 5
 
-      # Get the merge base between the PR branch and main
-      - name: Get merge base
-        id: merge-base
-        run: |
-          BASE=$(git merge-base main HEAD)
-          echo "merge_base=$BASE" >> $GITHUB_ENV
-
-      # Compare the changes between the PR branch and main
-      - name: Compare with main
-        run: |
-          echo "Changed files:"
-          git diff --name-only ${{ env.merge_base }}..HEAD
-
-      # Optional: Save the list of changed files in a GitHub Action output
-      - name: Save changed files
-        id: changed_files
-        run: |
-          changed_files=$(git diff --name-only ${{ env.merge_base }}..HEAD)
-          echo "changed_files=$changed_files" >> $GITHUB_ENV
-
-      # Display the changed files
-      - name: Display changed files
-        run: |
-          echo "Files changed in this PR compared to main:"
-          echo "${{ env.changed_files }}"
+#      # Get the merge base between the PR branch and main
+#      - name: Get merge base
+#        id: merge-base
+#        run: |
+#          BASE=$(git merge-base main HEAD)
+#          echo "merge_base=$BASE" >> $GITHUB_ENV
+#
+#      # Compare the changes between the PR branch and main
+#      - name: Compare with main
+#        run: |
+#          echo "Changed files:"
+#          git diff --name-only ${{ env.merge_base }}..HEAD
+#
+#      # Optional: Save the list of changed files in a GitHub Action output
+#      - name: Save changed files
+#        id: changed_files
+#        run: |
+#          changed_files=$(git diff --name-only ${{ env.merge_base }}..HEAD)
+#          echo "changed_files=$changed_files" >> $GITHUB_ENV
+#
+#      # Display the changed files
+#      - name: Display changed files
+#        run: |
+#          echo "Files changed in this PR compared to main:"
+#          echo "${{ env.changed_files }}"
