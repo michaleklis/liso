@@ -15,6 +15,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       # Fetch the latest commit from the main branch
       - name: Fetch main branch
         run: |
@@ -26,7 +31,7 @@ jobs:
           git status
           git log --oneline -n 5
           echo "no i diffuj!"
-          git diff --name-only main...HEAD 
+          git diff --name-only origin/main...HEAD
           echo "no i kurwa zdiffował"
 
 #      # Get the merge base between the PR branch and main
