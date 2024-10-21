@@ -1,0 +1,42 @@
+name: Compare PR Changes
+
+on:
+  pull_request:
+    types: [ synchronize, opened ]
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the pull request branch
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      # Fetch the latest commit from the main branch
+      - name: Fetch main branch
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      # Get the diff between the PR and main
+      - name: Compare with main
+        run: |
+          git checkout ${{ github.event.pull_request.head.sha }}
+          git diff --name-only main...${{ github.event.pull_request.head.sha }}
+
+      # Optional: Save the list of changed files in a GitHub Action output
+      - name: Save changed files
+        id: changed_files
+        run: |
+          changed_files=$(git diff --name-only main...${{ github.event.pull_request.head.sha }})
+          echo "changed_files=$changed_files" >> $GITHUB_ENV
+
+      # Display the changed files
+      - name: Display changed files
+        run: |
+          echo "Files changed in this PR compared to main:"
+          echo "${{ env.changed_files }}"
